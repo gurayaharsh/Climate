@@ -8,6 +8,8 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var searchTextField: UITextField!
     
+    var weatherManger = WeatherManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -18,12 +20,19 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
         searchTextField.endEditing(true)
     }
     
+    // delgate should ->  check if the action is allowed
+    // delgate did -> what to do after it did
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
         return true
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        if let city = textField.text {
+            weatherManger.getWeather(city)
+        }
         
         textField.text = ""
     }
