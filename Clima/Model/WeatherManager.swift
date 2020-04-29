@@ -7,16 +7,22 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct WeatherManager {
     
+    var delegate: WeatherManagerDelegate?
     let weatherUrl = "https://api.openweathermap.org/data/2.5/weather?appid=ca3da37468bc1466544824628a34fb2a&units=metric"
     
-    // apiKey = "ca3da37468bc1466544824628a34fb2a"
     
-    func getWeather(_ cityName: String){
+    func getWeatherByCity(_ cityName: String){
         let urlString = "\(weatherUrl)&q=\(cityName)"
         performRequest(urlString)
+    }
+    
+    func getWeatherByCoord(_ lat: CLLocationDegrees, _ lon: CLLocationDegrees){
+         let urlString = "\(weatherUrl)&lat=\(lat)&lon=\(lon)"
+               performRequest(urlString)
     }
     
     func performRequest(_ urlString: String){
@@ -29,12 +35,14 @@ struct WeatherManager {
                 // Task is calling completitonHandler and passing it the inputs if they exist.
                 
                 if error != nil {
-                    print(error!)
+                    self.delegate?.didFailWithError(error!)
                     return
                 }
                 
                 if let safeData = data {
-                    self.parseJSON(safeData)
+                    if let weatherDisplay = self.parseJSON(safeData){
+                        self.delegate?.didUpdateWeather(self, weatherDisplay)
+                    }
                 }
             }
             
@@ -43,18 +51,26 @@ struct WeatherManager {
         
     }
     
-    func parseJSON(_ data: Data){
+    func parseJSON(_ data: Data) -> WeatherDisplay?{
         
         let decoder = JSONDecoder()
         
         do{
             let weatherData = try decoder.decode(WeatherData.self, from: data)
-            print(weatherData.name)
-            print(weatherData.main.temp)
-            print(weatherData.weather[0].description)
+            let id = weatherData.weather[0].id
+            let name = weatherData.name
+            let temp = weatherData.main.temp
+           
+            
+            let weatherDisplay = WeatherDisplay(conditionID: id, cityName: name, temperature: temp)
+            
+            return weatherDisplay
         }
         catch {
-            print(error)
+            delegate?.didFailWithError(error)
+            return nil
         }
     }
+    
+    
 }
