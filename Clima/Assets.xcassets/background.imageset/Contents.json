@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "light_background.pdf"
+      "filename" : "dark_background-1.pdf"
     },
     {
       "idiom" : "universal",
-      "filename" : "light_background-1.pdf",
+      "filename" : "dark_background.pdf",
       "appearances" : [
         {
           "appearance" : "luminosity",
@@ -16,7 +16,7 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "dark_background.pdf",
+      "filename" : "light_background.pdf",
       "appearances" : [
         {
           "appearance" : "luminosity",
